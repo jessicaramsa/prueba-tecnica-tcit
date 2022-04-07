@@ -106,7 +106,22 @@ function biggestAvocadoFarms() {
 
 // 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
 function biggestCherriesManagers() {
-  // CODE HERE
+  const paddockManagersForestal = paddocks.filter(paddocksManager => {
+    return paddocksManager.farmId === 3 && paddocksManager.area > 1000;
+  });
+
+  const paddocksManagersName = paddockManagersForestal.map(managerForestal => {
+    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === managerForestal.paddockManagerId);
+    return managerInfo.name;
+  });
+
+  const paddocksManagersFiltered = [...new Set(paddocksManagersName)]
+
+  return paddocksManagersFiltered.sort((previousPaddock, currentPaddock) => {
+    return previousPaddock < currentPaddock
+      ? -1
+      : (previousPaddock > currentPaddock ? 1 : 0);
+  });
 }
 
 // 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
