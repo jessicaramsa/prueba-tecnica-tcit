@@ -91,7 +91,38 @@ function sortPaddockTypeByTotalArea() {
 
 // 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
 function sortFarmManagerByAdminArea() {
-  // CODE HERE
+  const managers = []
+
+  paddocks.forEach(paddock => {
+    const managerIndex = managers.findIndex(manager => manager.managerId === paddock.paddockManagerId);
+    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === paddock.paddockManagerId);
+
+    let newManagerInfo = {
+      "managerId": paddock.paddockManagerId,
+      "managerName": managerInfo.name,
+      "area": paddock.area
+    }
+
+    if (managerIndex > -1) {
+      const area = newManagerInfo.area + managers[managerIndex].area
+      managers[managerIndex] = {
+        ...newManagerInfo,
+        area,
+        "hectare": area / 10000
+      }
+    } else {
+      managers.push({
+        ...newManagerInfo,
+        "hectare": newManagerInfo.area / 10000
+      });
+    }
+  });
+
+  const sortedManagers = managers.sort((previousManager, currentManager) => {
+    return currentManager.hectare - previousManager.hectare;
+  });
+
+  return sortedManagers.map(manager => manager.managerName)
 }
 
 // 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
