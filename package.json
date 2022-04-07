@@ -1,0 +1,11 @@
+{
+  "name": "prueba-tecnica-tcit",
+  "version": "1.0.0",
+  "description": "Prueba técnica para vacante Full-Stack Junior TCIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Jéssica Ramírez",
+  "license": "ISC"
+}
