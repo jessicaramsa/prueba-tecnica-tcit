@@ -79,6 +79,18 @@ function listPaddockManagerIds() {
   return paddockManagers.map((paddockManager) => paddockManager.id);
 };
 
+function sortDecremental(array) {
+  return array.sort((previousElement, currentElement) => currentElement - previousElement);
+}
+
+function sortAlphabetical(array) {
+  return array.sort((previousElement, currentElement) => {
+    return previousElement < currentElement
+      ? -1
+      : (previousElement > currentElement ? 1 : 0);
+  });
+}
+
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
 function listPaddockManagersByName() {
   // CODE HERE
@@ -181,16 +193,25 @@ function biggestCherriesManagers() {
 
   const paddocksManagersFiltered = [...new Set(paddocksManagersName)]
 
-  return paddocksManagersFiltered.sort((previousPaddock, currentPaddock) => {
-    return previousPaddock < currentPaddock
-      ? -1
-      : (previousPaddock > currentPaddock ? 1 : 0);
-  });
+  return sortAlphabetical(paddocksManagersFiltered)
 }
 
 // 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
 function farmManagerPaddocks() {
-  // CODE HERE
+  const managers = Object.fromEntries(paddockManagers.map(manager => {
+    const paddocksIdsManaged = paddocks.filter(paddock => {
+      if (paddock.paddockManagerId === manager.id) return paddock.farmId;
+    });
+    const farmsNames = paddocksIdsManaged.map(paddock => {
+      const farm = farms.find(farm => farm.id === paddock.farmId);
+      return farm.name;
+    });
+    const filteredFarmsNames = [ ...new Set(farmsNames) ];
+
+    return [ manager.name, sortAlphabetical(filteredFarmsNames) ];
+  }));
+
+  return managers;
 }
 
 // 8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del administrador y el valor el nombre del administrador
