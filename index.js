@@ -191,9 +191,9 @@ function biggestCherriesManagers() {
     return managerInfo.name;
   });
 
-  const paddocksManagersFiltered = [...new Set(paddocksManagersName)]
+  const paddocksManagersFiltered = [...new Set(paddocksManagersName)];
 
-  return sortAlphabetical(paddocksManagersFiltered)
+  return sortAlphabetical(paddocksManagersFiltered);
 }
 
 // 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
