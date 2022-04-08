@@ -79,16 +79,22 @@ function listPaddockManagerIds() {
   return paddockManagers.map((paddockManager) => paddockManager.id);
 };
 
-function sortDecremental(array) {
-  return array.sort((previousElement, currentElement) => currentElement - previousElement);
-}
-
 function sortAlphabetical(array) {
   return array.sort((previousElement, currentElement) => {
     return previousElement < currentElement
       ? -1
       : (previousElement > currentElement ? 1 : 0);
   });
+}
+
+function findPaddockTypeName(paddockTypeId) {
+  const paddockTypeInfo = paddockType.find(typeInfo => typeInfo.id === paddockTypeId);
+  return paddockTypeInfo.name;
+}
+
+function findManagerName(managerId) {
+  const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === managerId);
+  return managerInfo.name;
 }
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
@@ -127,10 +133,7 @@ function sortPaddockTypeByTotalArea() {
     return currentType.hectare - previousType.hectare;
   });
 
-  return sortedFarmTypes.map(type => {
-    const paddockTypeInfo = paddockType.find(typeInfo => type.paddockTypeId === typeInfo.id);
-    return paddockTypeInfo.name;
-  });
+  return sortedFarmTypes.map(type => findPaddockTypeName(type.paddockTypeId));
 }
 
 // 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
@@ -164,10 +167,7 @@ function sortFarmManagerByAdminArea() {
     return currentManager.hectare - previousManager.hectare;
   });
 
-  return sortedManagers.map(manager => {
-    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === manager.paddockManagerId);
-    return managerInfo.name;
-  });
+  return sortedManagers.map(manager => findManagerName(manager.paddockManagerId));
 }
 
 // 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
@@ -187,11 +187,9 @@ function biggestCherriesManagers() {
   });
 
   const paddocksManagersName = paddockManagersForestal.map(managerForestal => {
-    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === managerForestal.paddockManagerId);
-    return managerInfo.name;
+    return findManagerName(managerForestal.paddockManagerId);
   });
-
-  const paddocksManagersFiltered = [...new Set(paddocksManagersName)];
+  const paddocksManagersFiltered = [ ...new Set(paddocksManagersName) ];
 
   return sortAlphabetical(paddocksManagersFiltered);
 }
