@@ -94,7 +94,7 @@ function findPaddockTypeName(paddockTypeId) {
 
 function findManagerName(managerId) {
   const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === managerId);
-  return managerInfo.name;
+  return managerInfo ? managerInfo.name : null;
 }
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
@@ -214,7 +214,18 @@ function farmManagerPaddocks() {
 
 // 8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del administrador y el valor el nombre del administrador
 function paddocksManagers() {
-  // CODE HERE
+  return Object.fromEntries(paddocks.map(paddock => {
+    const key = `${findPaddockTypeName(paddock.paddockTypeId)}-${paddock.harvestYear}`;
+    const paddocksManagers = paddocks.filter(filteredPaddock => {
+      return filteredPaddock.paddockTypeId === paddock.paddockTypeId && filteredPaddock.harvestYear === paddock.harvestYear;
+    });
+
+    const filteredManagers = Object.fromEntries(paddocksManagers.map(paddocksManager => {
+      return [ paddocksManager.paddockManagerId, findManagerName(paddocksManager.paddockManagerId) ];
+    }));
+
+    return [ key, filteredManagers ];
+  }));
 }
 
 // 9 Agregar nuevo administrador con datos ficticios a "paddockManagers" y agregar un nuevo cuartel de tipo NOGALES con 900mts2, año 2017 de AGRICOLA SANTA ANA, administrado por este nuevo administrador 
