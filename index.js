@@ -86,25 +86,55 @@ function listPaddockManagersByName() {
 
 // 2 Arreglo con los nombres de cada tipo de cultivo, ordenados decrecientemente por la suma TOTAL de la cantidad de hectáreas plantadas de cada uno de ellos.
 function sortPaddockTypeByTotalArea() {
-  // CODE HERE
+  const farmTypes = [];
+
+  paddocks.forEach(paddock => {
+    const farmIndex = farmTypes.findIndex(farm => farm.paddockTypeId === paddock.paddockTypeId);
+
+    let newFarmTypeInfo = {
+      "paddockTypeId": paddock.paddockTypeId,
+      "area": paddock.area
+    }
+
+    if (farmIndex > -1) {
+      const area = newFarmTypeInfo.area + farmTypes[farmIndex].area;
+      farmTypes[farmIndex] = {
+        ...newFarmTypeInfo,
+        area,
+        "hectare": area / 10000
+      }
+    } else {
+      farmTypes.push({
+        ...newFarmTypeInfo,
+        "hectare": newFarmTypeInfo.area / 10000
+      });
+    }
+  });
+
+  const sortedFarmTypes = farmTypes.sort((previousType, currentType) => {
+    return currentType.hectare - previousType.hectare;
+  });
+
+  return sortedFarmTypes.map(type => {
+    const paddockTypeInfo = paddockType.find(typeInfo => type.paddockTypeId === typeInfo.id);
+    return paddockTypeInfo.name;
+  })
 }
 
 // 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
 function sortFarmManagerByAdminArea() {
-  const managers = []
+  const managers = [];
 
   paddocks.forEach(paddock => {
-    const managerIndex = managers.findIndex(manager => manager.managerId === paddock.paddockManagerId);
-    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === paddock.paddockManagerId);
+    const managerIndex = managers.findIndex(manager => manager.paddockManagerId === paddock.paddockManagerId);
 
     let newManagerInfo = {
-      "managerId": paddock.paddockManagerId,
-      "managerName": managerInfo.name,
+      "paddockManagerId": paddock.paddockManagerId,
       "area": paddock.area
     }
 
     if (managerIndex > -1) {
-      const area = newManagerInfo.area + managers[managerIndex].area
+      const area = newManagerInfo.area + managers[managerIndex].area;
       managers[managerIndex] = {
         ...newManagerInfo,
         area,
@@ -122,7 +152,10 @@ function sortFarmManagerByAdminArea() {
     return currentManager.hectare - previousManager.hectare;
   });
 
-  return sortedManagers.map(manager => manager.managerName)
+  return sortedManagers.map(manager => {
+    const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === manager.paddockManagerId);
+    return managerInfo.name;
+  });
 }
 
 // 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
