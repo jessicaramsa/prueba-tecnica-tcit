@@ -97,6 +97,37 @@ function findManagerName(managerId) {
   return managerInfo ? managerInfo.name : null;
 }
 
+function calculatePaddockManagerRanking(paddocksRows) {
+  const managersRanking = [];
+
+  paddocksRows.forEach(paddock => {
+    const managerIndex = managersRanking.findIndex(manager => manager.paddockManagerId === paddock.paddockManagerId);
+
+    let newManagerInfo = {
+      "paddockManagerId": paddock.paddockManagerId,
+      "area": paddock.area
+    }
+
+    if (managerIndex > -1) {
+      const area = newManagerInfo.area + managersRanking[managerIndex].area;
+      managersRanking[managerIndex] = {
+        ...newManagerInfo,
+        area,
+        "hectare": area / 10000
+      }
+    } else {
+      managersRanking.push({
+        ...newManagerInfo,
+        "hectare": newManagerInfo.area / 10000
+      });
+    }
+  });
+
+  return managersRanking.sort((previousManager, currentManager) => {
+    return currentManager.hectare - previousManager.hectare;
+  });
+}
+
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
 function listPaddockManagersByName() {
   // CODE HERE
@@ -138,36 +169,8 @@ function sortPaddockTypeByTotalArea() {
 
 // 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
 function sortFarmManagerByAdminArea() {
-  const managers = [];
-
-  paddocks.forEach(paddock => {
-    const managerIndex = managers.findIndex(manager => manager.paddockManagerId === paddock.paddockManagerId);
-
-    let newManagerInfo = {
-      "paddockManagerId": paddock.paddockManagerId,
-      "area": paddock.area
-    }
-
-    if (managerIndex > -1) {
-      const area = newManagerInfo.area + managers[managerIndex].area;
-      managers[managerIndex] = {
-        ...newManagerInfo,
-        area,
-        "hectare": area / 10000
-      }
-    } else {
-      managers.push({
-        ...newManagerInfo,
-        "hectare": newManagerInfo.area / 10000
-      });
-    }
-  });
-
-  const sortedManagers = managers.sort((previousManager, currentManager) => {
-    return currentManager.hectare - previousManager.hectare;
-  });
-
-  return sortedManagers.map(manager => findManagerName(manager.paddockManagerId));
+  const managersRanking = calculatePaddockManagerRanking(paddocks);
+  return managersRanking.map(manager => findManagerName(manager.paddockManagerId));
 }
 
 // 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
@@ -232,7 +235,15 @@ function paddocksManagers() {
 // Luego devolver el lugar que ocupa este nuevo administrador en el ranking de la pregunta 3.
 // No modificar arreglos originales para no alterar las respuestas anteriores al correr la solución
 function newManagerRanking() {
-  // CODE HERE
+  const newManagerRow = { id: 7, taxNumber: '123456789', name: 'JESSICA RAMIREZ' };
+  const newPaddockManagers = [ ...paddockManagers, newManagerRow ];
+  
+  const newPaddockRow = { paddockManagerId: 7, farmId: 1, paddockTypeId: 4, harvestYear: 2017, area: 900 };
+  const newPaddocks = [ ...paddocks, newPaddockRow ];
+
+  const managersRanking = calculatePaddockManagerRanking(newPaddocks, newPaddockManagers);
+  const positionRanking = managersRanking.findIndex(manager => manager.paddockManagerId === newManagerRow.id);
+  return positionRanking > -1 ? (positionRanking + 1) : 0;
 }
 
 
