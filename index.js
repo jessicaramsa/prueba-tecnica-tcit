@@ -118,7 +118,7 @@ function sortPaddockTypeByTotalArea() {
   return sortedFarmTypes.map(type => {
     const paddockTypeInfo = paddockType.find(typeInfo => type.paddockTypeId === typeInfo.id);
     return paddockTypeInfo.name;
-  })
+  });
 }
 
 // 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
