@@ -221,7 +221,7 @@ function biggestCherriesManagers() {
 
 // 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
 function farmManagerPaddocks() {
-  const managers = Object.fromEntries(paddockManagers.map(manager => {
+  const managers = paddockManagers.map(manager => {
     const paddocksIdsManaged = paddocks.filter(paddock => {
       if (paddock.paddockManagerId === manager.id) return paddock.farmId;
     });
@@ -232,9 +232,15 @@ function farmManagerPaddocks() {
     const filteredFarmsNames = [ ...new Set(farmsNames) ];
 
     return [ manager.name, sortAlphabetical(filteredFarmsNames) ];
-  }));
+  });
 
-  return managers;
+  const sortedManagers = managers.sort((previousManager, currentManager) => {
+    return previousManager[0] < currentManager[0]
+      ? -1
+      : (previousManager[0] > currentManager[0] ? 1 : 0);
+  });
+
+  return Object.fromEntries(sortedManagers);
 }
 
 // 8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del administrador y el valor el nombre del administrador
