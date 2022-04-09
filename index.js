@@ -202,7 +202,14 @@ function farmManagerNames() {
 
 // 5 Arreglo ordenado decrecientemente con los m2 totales de cada campo que tengan más de 2 hectáreas en Paltos
 function biggestAvocadoFarms() {
-  // TODO: sumar por tipo de granja
+  const paltosFarms = [];
+
+  farms.forEach(farm => {
+    const paddocksPerFarm = paddocks.filter(paddock => paddock.farmId === farm.id && paddock.paddockTypeId === 1);
+    const paltosHectare = paddocksPerFarm.reduce((sum, paddock) => sum + paddock.area, 0);
+    if (paltosHectare / 10000 > 2) paltosFarms.push(paltosHectare);
+  });
+  return paltosFarms.sort((previousElement, currentElement) => currentElement - previousElement);
 }
 
 // 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
