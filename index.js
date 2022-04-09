@@ -97,6 +97,11 @@ function findManagerName(managerId) {
   return managerInfo ? managerInfo.name : null;
 }
 
+function findFarmName(farmId) {
+  const farmInfo = farms.find(farm => farm.id === farmId);
+  return farmInfo ? farmInfo.name : null;
+}
+
 function calculatePaddockManagerRanking(paddocksRows) {
   const managersRanking = [];
 
@@ -130,7 +135,7 @@ function calculatePaddockManagerRanking(paddocksRows) {
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
 function listPaddockManagersByName() {
-  // CODE HERE
+  return sortAlphabetical(paddockManagers).map(paddockManager => paddockManager.taxNumber);
 };
 
 // 2 Arreglo con los nombres de cada tipo de cultivo, ordenados decrecientemente por la suma TOTAL de la cantidad de hectáreas plantadas de cada uno de ellos.
@@ -175,12 +180,29 @@ function sortFarmManagerByAdminArea() {
 
 // 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
 function farmManagerNames() {
-  // CODE HERE
+  const farmsSortByName = farms.sort((previousFarm, currentFarm) => {
+    return previousFarm.name < currentFarm.name
+      ? -1
+      : (previousFarm.name > currentFarm.name ? 1 : 0);
+  });
+
+  const farmsManagers = Object.fromEntries(farmsSortByName.map(farm => {
+    const paddocksManagerFarm = paddocks.filter(paddock => paddock.farmId === farm.id);
+    const rutsManagers = paddocksManagerFarm.map(paddock => {
+      const managerInfo = paddockManagers.find(paddockManager => paddockManager.id === paddock.paddockManagerId);
+      return managerInfo.taxNumber;
+    });
+    const filteredManagers = [ ...new Set(rutsManagers) ];
+
+    return [ findFarmName(farm.id), filteredManagers ];
+  }));
+
+  return farmsManagers;
 }
 
 // 5 Arreglo ordenado decrecientemente con los m2 totales de cada campo que tengan más de 2 hectáreas en Paltos
 function biggestAvocadoFarms() {
-  // CODE HERE
+  // TODO: sumar por tipo de granja
 }
 
 // 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
